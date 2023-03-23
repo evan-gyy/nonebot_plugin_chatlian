@@ -1,7 +1,10 @@
+# config
+config.py
+
 # models
 mockingbird/
-data/sgns.weibo.bigram-char.bin
-data/sgns.weibo.bigram-char.bin.vectors.npy
+resources/data/sgns.weibo.bigram-char.bin
+resources/data/sgns.weibo.bigram-char.bin.vectors.npy
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
