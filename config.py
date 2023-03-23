@@ -8,6 +8,8 @@ resource_path = Path(__file__).parent / "resources"
 
 
 class Config(BaseModel, extra=Extra.ignore):
+    # ChatGLM模型路径
+    chatglm_model_path: str = ""
     # OpenAI的API_KEY
     openai_api_key: str = ""
     # 申请源1.0API的账号名与手机号
