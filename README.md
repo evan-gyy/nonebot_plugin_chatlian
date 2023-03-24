@@ -7,9 +7,9 @@ AI莲莲，基于ChatGLM等对话模型实现
 莲莲不仅会与你亲密聊天，也会用表情包表达她的感受
 
 <center class="half">
-    <img src="resources/example2.jpg" width="200"/>
-    <img src="resources/example3.jpg" width="225"/>
-    <img src="resources/example1.jpg" width="165"/>
+    <img src="resources/example2.jpg" width="180"/>
+    <img src="resources/example3.jpg" width="200"/>
+    <img src="resources/example1.jpg" width="150"/>
 </center>
 
 # 指令
