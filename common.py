@@ -61,7 +61,7 @@ def random_file(path=IMG_PATH, regex='\d+', end='\.\w+'):
 def trans_mark(str):
     # E_pun = u'，。！？【】（）《》“‘：；［］｛｝&，．？（）＼％－＋￣~＄#＠=＿、／'
     # C_pun = u',.!?[]()<>"\':;[]{}&,.?()\\%-+~~$#@=_//'
-    E_pun = u'，。！？“‘：；'
-    C_pun = u',.!?"\':;'
+    E_pun = u'，！？“‘：；'
+    C_pun = u',!?"\':;'
     table = {ord(f): ord(t) for f, t in zip(C_pun, E_pun)}
     return str.translate(table)

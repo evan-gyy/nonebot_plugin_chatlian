@@ -4,6 +4,7 @@ import platform
 import sys
 import time
 import traceback
+import nonebot
 from nonebot import on_command, on_keyword
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment, Message, MessageEvent, GroupMessageEvent
 from nonebot.log import logger
@@ -13,7 +14,8 @@ from transformers import AutoTokenizer, AutoModel
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from .inspurai import Yuan, set_yuan_account, Example
 from .config import config
-from .utils import *
+from .common import *
+
 
 dir_path = Path(__file__).parent / "resources"
 IMG_PATH = str((dir_path / "meme").absolute()) + "/"
@@ -46,7 +48,10 @@ __plugin_settings__ = {
     "limit_superuser": False,
     "cmd": __plugin_cmd__,
 }
-__plugin_block_limit__ = {"rst": "我知道你很急，但你先别急"}
+__plugin_cd_limit__ = {
+    "cd": 2,
+    "rst": "莲莲思考中，请稍候再试"
+}
 
 # Yuan1.0
 set_yuan_account(config.yuan_account, config.yuan_phone)
@@ -87,7 +92,7 @@ chat_info = {}
 max_ctx = 10
 
 dxl = on_command("莲莲", priority=5, block=True)
-dxl_kw = on_keyword({"罕见", "爱国", "莲莲"}, priority=5, block=True)
+dxl_kw = on_keyword({"罕见", "爱国"}, priority=5, block=True)
 
 show_mode = on_command("查看模型", priority=5, block=True)
 change_mode = on_command("切换模型", priority=5, block=True)
@@ -142,26 +147,28 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         elif mode.lower() in 'ChatGLM-6B'.lower():
             try:
                 loop = asyncio.get_event_loop()
-                response, conv, time_delta = await loop.run_in_executor(None, ask_glm, text, per + conv)
+                response, conv, time_delta = await loop.run_in_executor(None, ask_glm, text,
+                                                                        conv if conv else per + conv)
                 logger.info(f"回答: {response}s")
                 logger.info(f"耗时: {time_delta}s")
-                logger.info(f"历史句数量: {len(conv)}")
                 await dxl.send(response, at_sender=True)
 
             except Exception as e:
                 logger.error(str(e))
                 traceback.print_exc()
 
-            conv = conv[1:] if len(conv) > max_ctx else conv
-            chat_info[chat_id]['history'] = conv
+        conv = conv[1:] if len(conv) > max_ctx else conv
+        logger.info(f"历史句数量: {len(conv)}")
+        chat_info[chat_id]['history'] = conv
+
+
+    file = similar_meme(text.replace("莲莲", ""), logger, 3)
+    await dxl.send(MessageSegment.image(file))
 
 
 @dxl_kw.handle()
 async def _(bot: Bot, event: Event):
     text = event.get_plaintext().strip()
-    if "莲莲" in text:
-        file = similar_meme(text.replace("莲莲", ""), logger, 3)
-        await dxl.send(MessageSegment.image(file))
     if "罕见" in text:
         file = random_file(RECORD_PATH + '/hj')
         await dxl.send(MessageSegment.record(file))
